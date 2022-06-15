@@ -1,19 +1,26 @@
 plugins {
     id 'java'
     id 'io.quarkus'
+    id "com.diffplug.spotless" version "6.7.2"
 }
 
 repositories {
     mavenCentral()
     mavenLocal()
+    maven{ url("https://repo.gradle.org/gradle/libs-releases/") }
 }
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation enforcedPlatform("${quarkusPlatformGroupId}:quarkus-camel-bom:${quarkusPlatformVersion}")
-    implementation 'org.apache.camel.quarkus:camel-quarkus-github'
     implementation 'io.quarkus:quarkus-arc'
     testImplementation 'io.quarkus:quarkus-junit5'
+    implementation(gradleApi())
+    // The tooling API need an SLF4J implementation available at runtime, replace this with any other implementation
+    runtimeOnly 'org.slf4j:slf4j-simple:1.7.10'
+    implementation group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '6.1.0.202203080745-r'
+    implementation 'io.quarkiverse.githubaction:quarkus-github-action:0.3.0'
+    implementation "io.quarkiverse.githubapp:quarkus-github-app:1.8.5"
 }
 
 group 'io.github.martinwitt'
@@ -31,4 +38,9 @@ compileJava {
 
 compileTestJava {
     options.encoding = 'UTF-8'
+}
+spotless {
+  java {
+    palantirJavaFormat()
+  }
 }
